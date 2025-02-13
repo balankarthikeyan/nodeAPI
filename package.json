@@ -5,7 +5,6 @@
   "main": "build/app.js",
   "scripts": {
     "test": "test",
-    "build2": "npx tsc && nodemon ./build/app.js",
     "compress": "tsc && uglifyjs ./build/app.js -o ./build/app.min.js --compress --mangle",
     "build": "npm run compress && --watch & nodemon ./build/app.min.js",
     "start": "npx tsc --watch & nodemon ./build/app.js"
