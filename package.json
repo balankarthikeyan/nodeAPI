@@ -1,27 +1,26 @@
 {
-  "name": "backendkit",
+  "name": "nodejs-docker-web-app",
   "version": "1.0.0",
-  "description": "API ",
-  "main": "./build/app.js",
+  "description": "Node.js app on docker container",
+  "main": "server.js",
   "scripts": {
-    "test": "test",
-    "build2": "npx tsc && nodemon ./build/app.js",
     "compress": "tsc && uglifyjs ./build/app.js -o ./build/app.min.js --compress --mangle",
     "build": "npm run compress && --watch & nodemon ./build/app.min.js",
-    "start": "npx tsc --watch & nodemon ./build/app.js"
+    "start": "npx tsc && nodemon server.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "",
+  "author": "Dipesh Malvia",
   "license": "ISC",
   "dependencies": {
-    "express": "^4.21.2",
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
     "mongodb": "^6.13.0",
-    "mongoose": "^8.10.0",
-    "nodemon": "^3.1.9"
+    "mongoose": "^8.10.0"
   },
   "devDependencies": {
+    "nodemon": "^3.0.1",
     "@types/express": "^5.0.0",
     "@types/node": "^22.13.1",
-    "typescript": "^5.7.3",
-    "uglify-js": "^3.19.3"
+    "typescript": "^5.7.3"
   }
 }
