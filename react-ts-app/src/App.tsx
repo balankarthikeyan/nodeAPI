@@ -9,8 +9,8 @@ function App() {
       redirect: 'follow',
     } as any
 
-    fetch('http://localhost:8080/', requestOptions)
-      .then((response) => response.text())
+    fetch('http://localhost:8206/', requestOptions)
+      .then((response) => response.json())
       .then((result) => console.log(result))
       .catch((error) => console.error(error))
   }, [])
