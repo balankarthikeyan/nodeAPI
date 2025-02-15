@@ -1,7 +1,14 @@
 import express from "express";
+import cors from "cors";
 import DB from "./db";
 import dotenv from "dotenv";
 dotenv.config();
+
+const allowedOrigins = [
+  "http://localhost:3000",
+  "http://localhost:3001",
+  "https://your-frontend-domain.com",
+]; // Replace with your allowed origins
 
 const PORT = process.env.PORT || 8080;
 const app = express();
@@ -9,6 +16,19 @@ let dbName = "CV_BK";
 let collectionName = "Resume";
 
 app.use(express.json());
+app.use(
+  cors({
+    origin: (origin: any, callback) => {
+      if (allowedOrigins.indexOf(origin) !== -1 || !origin) {
+        // !origin allows tools like postman and curl
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
+  })
+);
+
 const dataBase = new DB();
 dataBase.MONGODB_URL =
   "mongodb+srv://karthikeyanbalan:Dinner1234@bk.glsqe.mongodb.net";

@@ -13,14 +13,31 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
+const cors_1 = __importDefault(require("cors"));
 const db_1 = __importDefault(require("./db"));
 const dotenv_1 = __importDefault(require("dotenv"));
 dotenv_1.default.config();
+const allowedOrigins = [
+    "http://localhost:3000",
+    "http://localhost:3001",
+    "https://your-frontend-domain.com",
+]; // Replace with your allowed origins
 const PORT = process.env.PORT || 8080;
 const app = (0, express_1.default)();
 let dbName = "CV_BK";
 let collectionName = "Resume";
 app.use(express_1.default.json());
+app.use((0, cors_1.default)({
+    origin: (origin, callback) => {
+        if (allowedOrigins.indexOf(origin) !== -1 || !origin) {
+            // !origin allows tools like postman and curl
+            callback(null, true);
+        }
+        else {
+            callback(new Error("Not allowed by CORS"));
+        }
+    },
+}));
 const dataBase = new db_1.default();
 dataBase.MONGODB_URL =
     "mongodb+srv://karthikeyanbalan:Dinner1234@bk.glsqe.mongodb.net";

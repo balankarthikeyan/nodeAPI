@@ -15,7 +15,7 @@
 
 
 
-    docker build . -t back-end-feb-15
-    docker run -d -p 8206:8080 back-end-feb-15/ID
+    docker build -t front-end-feb-15 .
+    docker run -p 4004:80 front-end-feb-15
 
 ```
