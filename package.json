@@ -3,10 +3,13 @@
   "version": "1.0.0",
   "description": "Node.js app on docker container",
   "main": "server.js",
+  "engines": {
+    "node": "18.x"
+  },
   "scripts": {
     "compress": "tsc && uglifyjs ./build/app.js -o ./build/app.min.js --compress --mangle",
     "build": "npm run compress && --watch & nodemon ./build/app.min.js",
-    "start": "npx tsc && nodemon server.js",
+    "start": "node server.js",
     "dev": "npx tsc && nodemon server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
