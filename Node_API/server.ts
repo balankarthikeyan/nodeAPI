@@ -1,9 +1,11 @@
 import express from "express";
 import cors from "cors";
-import DB from "./db";
 import dotenv from "dotenv";
+import JWT from "jsonwebtoken";
+import DB from "./db";
 dotenv.config();
 
+const tokenPrefix = "Bearer ";
 const allowedOrigins = [
   "http://localhost:3000",
   "http://localhost:3001",
@@ -34,6 +36,46 @@ dataBase.MONGODB_URL =
   "mongodb+srv://karthikeyanbalan:Dinner1234@bk.glsqe.mongodb.net";
 dataBase.dbName = dbName;
 dataBase.collectionName = collectionName;
+const secretKey = "karthikeyanbalan";
+const { sign = () => "", verify = () => "" } = JWT as any;
+
+const authenticate = async (req: any, res: any, next: any) => {
+  const authHeader = req.headers["authorization"];
+  let token = authHeader;
+
+  if (token.includes(tokenPrefix)) {
+    token = token.replace(tokenPrefix, "");
+  }
+
+  if (token == null || token == undefined) {
+    return res.sendStatus(401);
+  }
+  verify(token, secretKey, (err: any, user: any) => {
+    if (err) {
+      return res.sendStatus(403);
+    } // Invalid token
+    req.user = user; // Store user data in request object
+    next(); // Proceed to the next middleware or route handler
+  });
+};
+app.get("/getVerifyToken", authenticate, (req, res) => {
+  res.json({ message: "Protected route accessed!" });
+});
+app.get("/getToken", async (req: any, res: any) => {
+  const payload = {
+    userId: 123,
+    username: "john_doe",
+    role: "admin",
+  };
+
+  const options = {
+    expiresIn: "1h", // Token expiration time (e.g., '1h', '1d', '7d')
+  };
+
+  const token = sign(payload, secretKey, options);
+
+  res.send({ data: token });
+});
 app.get("/", async (req: any, res: any) => {
   dataBase.getDatabase({
     dbName,
