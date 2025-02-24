@@ -5,7 +5,7 @@ import { Provider } from 'react-redux'
 import { store } from './store'
 import { useDispatch } from 'react-redux'
 import { addCustomer as addCustomerAction } from './features/customerSlice'
-
+import Camera from './Camera'
 const Header = () => {
   return (
     <header className="App-header">
@@ -33,6 +33,7 @@ const Header = () => {
         </g>
       </svg>
       <h1>{`Karthikeyan Balan`}</h1>
+      {/* <Camera /> */}
     </header>
   )
 }
@@ -45,7 +46,6 @@ const AppComponent = () => {
 
   return (
     <div className="App">
-      <a href="vlc://open?file=C:\path\to\your\video.mp4">Open in VLC</a>
       <Header />
     </div>
   )
