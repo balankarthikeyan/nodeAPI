@@ -76,47 +76,135 @@ const Header = () => {
     })
     getSynth.speak(utterance)
   }
+
+  React.useEffect(() => {
+    let document = window?.document as any
+    const { webkitSpeechRecognition = () => '' } = window as any
+    // Check for browser support
+    if ('webkitSpeechRecognition' in window) {
+      const recognition = new webkitSpeechRecognition() // For Chrome and Safari
+      // const recognition = new SpeechRecognition(); // Standard syntax, for other browsers
+
+      recognition.continuous = true // Keep listening even after a pause
+      recognition.interimResults = true // Get partial results
+
+      let finalTranscript = ''
+
+      recognition.onresult = (event: any) => {
+        let interimTranscript = ''
+        for (let i = event.resultIndex; i < event.results.length; ++i) {
+          if (event.results[i].isFinal) {
+            finalTranscript += event.results[i][0].transcript
+          } else {
+            interimTranscript += event.results[i][0].transcript
+          }
+        }
+        document.getElementById('final').innerHTML = finalTranscript
+        document.getElementById('interim').innerHTML = interimTranscript
+        setText(finalTranscript)
+      }
+
+      recognition.onerror = (event: any) => {
+        console.error('Speech recognition error:', event.error)
+      }
+
+      recognition.onend = () => {
+        console.log('Speech recognition ended')
+      }
+
+      document.getElementById('start').onclick = () => {
+        finalTranscript = '' // Reset transcript
+        recognition.start()
+      }
+
+      document.getElementById('stop').onclick = () => {
+        recognition.stop()
+      }
+    } else {
+      console.error('Speech recognition not supported in this browser.')
+    }
+  }, [])
+
+  const renderOutput = () => {
+    return (
+      <>
+        <div
+          key={getText}
+          id="text"
+          style={{
+            width: 400,
+            fontSize: 13,
+            padding: 20,
+            margin: 20,
+            lineHeight: 3,
+          }}
+        >
+          {getText}
+        </div>
+        <div style={{ display: 'flex', flexDirection: 'row' }}>
+          <button
+            style={{ margin: 10 }}
+            id="btn"
+            type="button"
+            onClick={onTalk}
+          >
+            Talk START
+          </button>
+          <button
+            style={{ margin: 10 }}
+            id="btn"
+            type="button"
+            onClick={() => {
+              getSynth.cancel()
+            }}
+          >
+            Talk STOP
+          </button>
+          <button
+            style={{ margin: 10 }}
+            id="btn"
+            type="button"
+            onClick={() => {
+              getSynth.pause()
+            }}
+          >
+            Talk Pause
+          </button>
+          <button
+            style={{ margin: 10 }}
+            id="btn"
+            type="button"
+            onClick={() => {
+              getSynth.resume()
+            }}
+          >
+            Talk RESUME
+          </button>
+        </div>
+      </>
+    )
+  }
+
+  const renderInput = () => {
+    return (
+      <div>
+        <button id="start">Start</button>
+        <button id="stop">Stop</button>
+        <div id="final"></div>
+        <div id="interim"></div>
+      </div>
+    )
+  }
   return (
     <header className="App-header">
-      <div id="text" style={{ width: 400, fontSize: 13 }}>
-        {getText}
-      </div>
-      <button id="btn" type="button" onClick={onTalk}>
-        Talk START
-      </button>
-      <button
-        id="btn"
-        type="button"
-        onClick={() => {
-          getSynth.cancel()
-        }}
-      >
-        Talk STOP
-      </button>
-      <button
-        id="btn"
-        type="button"
-        onClick={() => {
-          getSynth.pause()
-        }}
-      >
-        Talk Pause
-      </button>
-      <button
-        id="btn"
-        type="button"
-        onClick={() => {
-          getSynth.resume()
-        }}
-      >
-        Talk RESUME
-      </button>
+      {renderOutput()}
       <br />
       <br />
       <br />
       <br />
+      {renderInput()}
 
-      <svg
+      {/* <svg
         className="App-logo"
         width="450.22"
         height="390.565"
@@ -139,7 +227,7 @@ const Header = () => {
           ></path>
         </g>
       </svg>
-      <h1>{`Karthikeyan Balan`}</h1>
+      <h1>{`Karthikeyan Balan`}</h1> */}
       {/* <Camera /> */}
     </header>
   )
