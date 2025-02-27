@@ -6,9 +6,116 @@ import { store } from './store'
 import { useDispatch } from 'react-redux'
 import { addCustomer as addCustomerAction } from './features/customerSlice'
 import Camera from './Camera'
+
+let lryics = `
+
+Every night in my dreams
+I see you. I feel you.
+That is how I know you go on.
+
+Far across the distance
+And spaces between us
+You have come to show you go on.
+
+Near, far, wherever you are
+I believe that the heart does go on
+Once more you open the door
+And you're here in my heart
+And my heart will go on and on
+
+Love can touch us one time
+And last for a lifetime
+And never go till we're one
+
+Love was when I loved you
+One true time I hold to
+In my life we'll always go on
+
+Near, far, wherever you are
+I believe that the heart does go on
+Once more you open the door
+And you're here in my heart
+And my heart will go on and on
+
+There is some love that will not
+go away
+
+You're here, there's nothing I fear,
+And I know that my heart will go on
+We'll stay forever this way
+You are safe in my heart
+And my heart will go on and on 
+
+`
 const Header = () => {
+  const [getSynth, setSynth] = React.useState(window.speechSynthesis)
+  const [getText, setText] = React.useState(lryics)
+  const onTalk = () => {
+    const highlight = (text: any, from: any, to: any) => {
+      let replacement = highlightBackground(text.slice(from, to))
+      return text.substring(0, from) + replacement + text.substring(to)
+    }
+    const highlightBackground = (sample: any) =>
+      `<span style="background-color:yellow;">${sample}</span>`
+
+    if (!getSynth) {
+      console.error('no tts')
+      return
+    }
+    let text = document.getElementById('text') as any
+    let originalText = text.innerText
+    let utterance = new SpeechSynthesisUtterance(originalText)
+    utterance.addEventListener('boundary', (event) => {
+      console.log('SPEAK>>')
+      const { charIndex, charLength } = event
+      text.innerHTML = highlight(
+        originalText,
+        charIndex,
+        charIndex + charLength,
+      )
+    })
+    getSynth.speak(utterance)
+  }
   return (
     <header className="App-header">
+      <div id="text" style={{ width: 400, fontSize: 13 }}>
+        {getText}
+      </div>
+      <button id="btn" type="button" onClick={onTalk}>
+        Talk START
+      </button>
+      <button
+        id="btn"
+        type="button"
+        onClick={() => {
+          getSynth.cancel()
+        }}
+      >
+        Talk STOP
+      </button>
+      <button
+        id="btn"
+        type="button"
+        onClick={() => {
+          getSynth.pause()
+        }}
+      >
+        Talk Pause
+      </button>
+      <button
+        id="btn"
+        type="button"
+        onClick={() => {
+          getSynth.resume()
+        }}
+      >
+        Talk RESUME
+      </button>
+      <br />
+      <br />
+      <br />
+      <br />
+
       <svg
         className="App-logo"
         width="450.22"
@@ -39,6 +146,7 @@ const Header = () => {
 }
 const AppComponent = () => {
   const dispatch = useDispatch() as any
+
   React.useEffect(() => {
     console.log('AppComponent?>>>>')
     dispatch(addCustomerAction('karthik'))
